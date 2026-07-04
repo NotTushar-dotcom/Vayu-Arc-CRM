@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { createRouter, publicQuery } from "../middleware";
-import { getDb } from "../queries/connection";
-import { leads, leadNotes, leadAttachments, outreachActivities, activityLog } from "@db/schema";
+import { createRouter, publicQuery } from "../middleware.js";
+import { getDb } from "../queries/connection.js";
+import { leads, leadNotes, leadAttachments, outreachActivities, activityLog } from "../../db/schema.js";
 import { eq, like, and, or, desc, gte, lte, count } from "drizzle-orm";
 
 const listInput = z.object({

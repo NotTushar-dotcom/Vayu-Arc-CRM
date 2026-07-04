@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { createRouter, publicQuery } from "../middleware";
-import { getDb } from "../queries/connection";
-import { clients, leads, projects, invoices } from "@db/schema";
+import { createRouter, publicQuery } from "../middleware.js";
+import { getDb } from "../queries/connection.js";
+import { clients, leads, projects, invoices } from "../../db/schema.js";
 import { eq, desc, count } from "drizzle-orm";
 
 const listInput = z.object({

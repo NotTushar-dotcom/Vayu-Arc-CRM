@@ -9,7 +9,7 @@ import {
   projects,
   invoices,
   activityLog,
-} from "./schema";
+} from "./schema.js";
 
 export const leadsRelations = relations(leads, ({ many, one }) => ({
   notes: many(leadNotes),
