@@ -12,8 +12,8 @@ import { Label } from "@/components/ui/label";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("admin@vayuarc.com");
-  const [password, setPassword] = useState("admin");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
