@@ -1,0 +1,448 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── ENUMS ──────────────────────────────────────────────
+
+enum PipelineStage {
+  LEAD_FOUND
+  LINKEDIN_REQUEST_SENT
+  CONNECTED
+  WEBSITE_RESEARCHED
+  SOCIALS_FOUND
+  EMAIL_FOUND
+  COLD_EMAIL_SENT
+  INSTAGRAM_DM_SENT
+  WAITING
+  FOLLOW_UP_1
+  FOLLOW_UP_2
+  DISCOVERY_CALL
+  PROPOSAL_SENT
+  CLIENT_WON
+  CLIENT_LOST
+}
+
+enum LeadSource {
+  LINKEDIN
+  INSTAGRAM
+  REFERRAL
+  WEBSITE
+  GOOGLE
+  COLD_EMAIL
+  OTHER
+}
+
+
+enum Platform {
+  LINKEDIN
+  INSTAGRAM
+  EMAIL
+  PHONE
+  WHATSAPP
+  MEETING
+  OTHER
+}
+
+enum MessageType {
+  CONNECTION_REQUEST
+  DIRECT_MESSAGE
+  COLD_EMAIL
+  FOLLOW_UP
+  CALL
+  MEETING
+  PROPOSAL
+  OTHER
+  GENERAL_EMAIL
+  VOICEMAIL
+  DISCOVERY_CALL
+  DEMO
+  CONSULTATION
+  CLOSING_CALL
+  NOTE
+  CUSTOM_INTERACTION
+  MESSAGE
+}
+
+enum MessageStatus {
+  SENT
+  DELIVERED
+  OPENED
+  REPLIED
+  NO_REPLY
+  BOUNCED
+  DRAFT
+  QUEUED
+  CLICKED
+  INTERESTED
+  NOT_INTERESTED
+  MEETING_BOOKED
+  PENDING
+  ACCEPTED
+  IGNORED
+  SEEN
+  READ
+  SCHEDULED
+  COMPLETED
+  MISSED
+  VOICEMAIL_LEFT
+  CANCELLED
+  RESCHEDULED
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum NeedsEditing {
+  YES
+  MAYBE
+  NO
+}
+
+// ─── USER (Auth) ────────────────────────────────────────
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  password      String?
+  image         String?
+  role          String    @default("admin")
+
+  accounts Account[]
+  sessions Session[]
+
+  leads        Lead[]
+  tasks        Task[]
+  activities   ActivityLog[]
+  notes        Note[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+// ─── LEAD ───────────────────────────────────────────────
+
+model Lead {
+  id String @id @default(cuid())
+
+  // Personal Information
+  fullName  String
+  company   String?
+  role      String?
+  country   String?
+  city      String?
+  timeZone  String?
+
+  // Contact
+  email     String?
+  phone     String?
+  website   String?
+  linkedin  String?
+  instagram String?
+  facebook  String?
+  twitter   String?
+  youtube   String?
+
+  // Research
+  industry          String?
+  services          String?
+  followers         Int?
+  postingFrequency  String?
+  videoQuality      Int?       @default(0) // 1-10
+  brandingRating    Int?       @default(0) // 1-10
+  needsEditing      NeedsEditing @default(MAYBE)
+  estimatedBudget   Float?
+  priorityScore     Int?       @default(0) // calculated
+
+  // Pipeline
+  source        LeadSource   @default(OTHER)
+  pipelineStage PipelineStage @default(LEAD_FOUND)
+
+  // Dates
+  addedDate       DateTime  @default(now())
+  lastContactDate DateTime?
+  nextFollowUp    DateTime?
+  clientSince     DateTime?
+
+  // Relations
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  client    Client?
+  outreach  OutreachHistory[]
+  tasks     Task[]
+  notes     Note[]
+  attachments Attachment[]
+  activities  ActivityLog[]
+
+  // Soft delete
+  archivedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([pipelineStage])
+  @@index([source])
+  @@index([country])
+  @@index([email])
+  @@index([fullName])
+  @@index([nextFollowUp])
+  @@index([userId])
+}
+
+// ─── OUTREACH ───────────────────────────────────────────
+
+model OutreachHistory {
+  id String @id @default(cuid())
+
+  leadId   String
+  lead     Lead   @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  date           DateTime @default(now())
+  platform       Platform
+  messageType    MessageType
+  status         MessageStatus   @default(SENT)
+  message        String?
+  reply          String?
+  followUpRequired Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([leadId])
+  @@index([platform])
+}
+
+// ─── TASK ───────────────────────────────────────────────
+
+model Task {
+  id String @id @default(cuid())
+
+  title       String
+  description String?
+  dueDate     DateTime?
+  priority    Priority @default(MEDIUM)
+  completed   Boolean  @default(false)
+  completedAt DateTime?
+  reminder    DateTime?
+
+  leadId String?
+  lead   Lead?  @relation(fields: [leadId], references: [id], onDelete: SetNull)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([dueDate])
+  @@index([completed])
+  @@index([userId])
+}
+
+// ─── NOTE ───────────────────────────────────────────────
+
+model Note {
+  id String @id @default(cuid())
+
+  content String @db.Text
+
+  leadId String
+  lead   Lead   @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([leadId])
+}
+
+// ─── ATTACHMENT ─────────────────────────────────────────
+
+model Attachment {
+  id String @id @default(cuid())
+
+  fileName    String
+  fileUrl     String
+  fileType    String
+  fileSize    Int
+
+  leadId String
+  lead   Lead   @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([leadId])
+}
+
+// ─── CLIENT ─────────────────────────────────────────────
+
+model Client {
+  id String @id @default(cuid())
+
+  leadId String @unique
+  lead   Lead   @relation(fields: [leadId], references: [id])
+
+  monthlyRetainer Float?
+  contractStart   DateTime?
+  contractEnd     DateTime?
+  status          String    @default("active") // active, paused, churned
+
+  projects Project[]
+  invoices Invoice[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ─── PROJECT ────────────────────────────────────────────
+
+model Project {
+  id String @id @default(cuid())
+
+  name        String
+  description String?
+  status      String  @default("active") // active, completed, on-hold
+  startDate   DateTime?
+  endDate     DateTime?
+  budget      Float?
+
+  clientId String
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  deliverables Deliverable[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([clientId])
+}
+
+// ─── DELIVERABLE ────────────────────────────────────────
+
+model Deliverable {
+  id String @id @default(cuid())
+
+  name      String
+  status    String  @default("pending") // pending, in-progress, delivered
+  dueDate   DateTime?
+  fileUrl   String?
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([projectId])
+}
+
+// ─── INVOICE ────────────────────────────────────────────
+
+model Invoice {
+  id String @id @default(cuid())
+
+  invoiceNumber String  @unique
+  amount        Float
+  status        String  @default("draft") // draft, sent, paid, overdue
+  dueDate       DateTime?
+  paidDate      DateTime?
+  description   String?
+
+  clientId String
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([clientId])
+  @@index([status])
+}
+
+// ─── ACTIVITY LOG ───────────────────────────────────────
+
+model ActivityLog {
+  id String @id @default(cuid())
+
+  action      String  // e.g., "lead_created", "email_sent", "stage_changed"
+  description String
+  entityType  String  // "lead", "client", "task", etc.
+  entityId    String?
+
+  leadId String?
+  lead   Lead?  @relation(fields: [leadId], references: [id], onDelete: SetNull)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([entityType])
+  @@index([leadId])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// ─── AGENCY SETTINGS ────────────────────────────────────
+
+model AgencySettings {
+  id String @id @default(cuid())
+
+  agencyName  String  @default("Vayu Arc")
+  email       String?
+  logoUrl     String?
+  primaryColor   String @default("#5b9e8a")
+  secondaryColor String @default("#7ec4a8")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
