@@ -32,9 +32,9 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        // Solid elevated background — no glass bleed-through
+        // Transparent glassmorphic background
         "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 p-6 rounded-xl",
-        "bg-[hsl(160_20%_10%)] text-[hsl(150_12%_90%)]",
+        "bg-[hsl(160_20%_10%)]/75 text-[hsl(150_12%_90%)] backdrop-blur-md",
         "border-2 border-border/60",
         "shadow-[0_24px_64px_rgba(0,0,0,0.7)] ring-1 ring-black/30",
         "duration-200",

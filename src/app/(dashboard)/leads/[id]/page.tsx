@@ -101,10 +101,13 @@ export default function LeadProfilePage({ params }: { params: Promise<{ id: stri
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column - Profile Card & Attachments */}
         <div className="lg:col-span-1 space-y-6">
-          <LeadProfileCard lead={{
-            ...lead,
-            score: lead.priorityScore ?? 50
-          }} />
+          <LeadProfileCard 
+            lead={{
+              ...lead,
+              score: lead.priorityScore ?? 50
+            }} 
+            onEditClick={() => setActiveTab("edit")}
+          />
 
           {/* Attachments Card */}
           <div className="rounded-xl border bg-card text-card-foreground shadow-sm p-4 space-y-4">
@@ -208,7 +211,7 @@ export default function LeadProfilePage({ params }: { params: Promise<{ id: stri
         {/* Right Column - Tabs & Content */}
         <div className="lg:col-span-2">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-4 bg-muted/50 p-1">
+            <TabsList className="grid w-full grid-cols-3 bg-muted/50 p-1">
               <TabsTrigger value="outreach" className="text-xs sm:text-sm gap-2">
                 <Calendar className="h-4 w-4 hidden sm:block" />
                 Outreach
@@ -220,10 +223,6 @@ export default function LeadProfilePage({ params }: { params: Promise<{ id: stri
               <TabsTrigger value="tasks" className="text-xs sm:text-sm gap-2">
                 <CheckSquare className="h-4 w-4 hidden sm:block" />
                 Tasks
-              </TabsTrigger>
-              <TabsTrigger value="edit" className="text-xs sm:text-sm gap-2">
-                <Edit className="h-4 w-4 hidden sm:block" />
-                Edit Lead
               </TabsTrigger>
             </TabsList>
             

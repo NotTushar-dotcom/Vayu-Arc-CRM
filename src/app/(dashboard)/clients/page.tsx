@@ -16,8 +16,10 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useRouter } from "next/navigation";
 
 export default function ClientsPage() {
+  const router = useRouter();
   const [clients, setClients] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
@@ -156,8 +158,11 @@ export default function ClientsPage() {
             const valueLabel = invoicedTotal > 0 ? "Total Invoiced" : "Est. Budget";
 
             return (
-              <Link key={client.id} href={`/leads/${client.lead.id}`} className="block group">
-                <Card className="glass overflow-hidden hover:shadow-lg transition-all duration-200 group-hover:border-primary/40 flex flex-col h-full cursor-pointer">
+              <div key={client.id} className="block group">
+                <Card 
+                  className="glass overflow-hidden hover:shadow-lg transition-all duration-200 group-hover:border-primary/40 flex flex-col h-full cursor-pointer bg-card"
+                  onClick={() => router.push(`/leads/${client.lead.id}`)}
+                >
                   {/* Status stripe */}
                   <div className={`h-1.5 w-full ${isActive ? "bg-emerald-500" : "bg-amber-500"}`} />
                   
@@ -232,13 +237,13 @@ export default function ClientsPage() {
                           variant="outline"
                           size="sm"
                           className="h-7 text-xs gap-1"
-                          onClick={(e) => e.stopPropagation()}
-                          asChild
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            router.push(`/leads/${client.lead.id}`);
+                          }}
                         >
-                          <Link href={`/leads/${client.lead.id}`}>
-                            <ExternalLink className="h-3 w-3" />
-                            Profile
-                          </Link>
+                          <ExternalLink className="h-3 w-3" />
+                          Profile
                         </Button>
                         <Button
                           size="sm"
@@ -256,7 +261,7 @@ export default function ClientsPage() {
                     </div>
                   </CardContent>
                 </Card>
-              </Link>
+              </div>
             );
           })
         )}

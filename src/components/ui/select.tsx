@@ -35,10 +35,10 @@ const SelectContent = React.forwardRef<
     <SelectPrimitive.Content
       ref={ref}
       className={cn(
-        // Solid opaque background — no glass/transparency — with elevated card colour
+        // Transparent glassmorphic background
         "relative z-[9999] max-h-96 min-w-[8rem] overflow-hidden rounded-xl",
         "border-2 border-border/80",
-        "bg-[hsl(160_20%_10%)] text-[hsl(150_12%_90%)]",
+        "bg-[hsl(160_20%_10%)]/75 text-[hsl(150_12%_90%)] backdrop-blur-md",
         "shadow-[0_8px_32px_rgba(0,0,0,0.6)] ring-1 ring-black/20",
         "data-[state=open]:animate-in data-[state=closed]:animate-out",
         "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",

@@ -38,7 +38,7 @@ const DropdownMenuSubContent = React.forwardRef<
     className={cn(
       "z-[9999] min-w-[8rem] overflow-hidden rounded-xl p-1",
       "border-2 border-border/80",
-      "bg-[hsl(160_20%_10%)] text-[hsl(150_12%_90%)]",
+      "bg-[hsl(160_20%_10%)]/75 text-[hsl(150_12%_90%)] backdrop-blur-md",
       "shadow-[0_8px_32px_rgba(0,0,0,0.6)] ring-1 ring-black/20",
       className
     )}
@@ -58,7 +58,7 @@ const DropdownMenuContent = React.forwardRef<
       className={cn(
         "z-[9999] min-w-[8rem] overflow-hidden rounded-xl p-1",
         "border-2 border-border/80",
-        "bg-[hsl(160_20%_10%)] text-[hsl(150_12%_90%)]",
+        "bg-[hsl(160_20%_10%)]/75 text-[hsl(150_12%_90%)] backdrop-blur-md",
         "shadow-[0_8px_32px_rgba(0,0,0,0.6)] ring-1 ring-black/20",
         "data-[state=open]:animate-in data-[state=closed]:animate-out",
         "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",

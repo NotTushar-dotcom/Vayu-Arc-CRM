@@ -2,9 +2,9 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { 
-  Building2, Globe, Mail, MapPin, 
-  Phone, User, Calendar, Save, Trash2 
+import {
+  Building2, Globe, Mail, MapPin,
+  Phone, User, Calendar, Save, Trash2
 } from "lucide-react";
 import { Linkedin, Instagram } from "@/components/icons/social-icons";
 
@@ -12,8 +12,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { 
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue 
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue
 } from "@/components/ui/select";
 import { leadCreateSchema, type LeadCreateInput } from "@/lib/validations";
 import { PIPELINE_STAGES, LEAD_SOURCES, COUNTRIES, NEEDS_EDITING_OPTIONS } from "@/lib/constants";
@@ -48,7 +48,7 @@ export function LeadForm({ initialData, onSubmit, onDelete, isLoading }: LeadFor
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        
+
         {/* Personal & Company */}
         <Card>
           <CardHeader>
@@ -65,7 +65,7 @@ export function LeadForm({ initialData, onSubmit, onDelete, isLoading }: LeadFor
                 <p className="text-xs text-destructive">{form.formState.errors.fullName.message}</p>
               )}
             </div>
-            
+
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Company</Label>
@@ -79,12 +79,12 @@ export function LeadForm({ initialData, onSubmit, onDelete, isLoading }: LeadFor
                 <Input {...form.register("role")} placeholder="CEO" />
               </div>
             </div>
-            
+
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Country</Label>
-                <Select 
-                  onValueChange={(val) => form.setValue("country", val)} 
+                <Select
+                  onValueChange={(val) => form.setValue("country", val)}
                   defaultValue={form.getValues("country") || undefined}
                 >
                   <SelectTrigger>
@@ -136,13 +136,16 @@ export function LeadForm({ initialData, onSubmit, onDelete, isLoading }: LeadFor
                 </div>
               </div>
             </div>
-            
+
             <div className="space-y-2">
               <Label>Website</Label>
               <div className="relative">
                 <Globe className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input {...form.register("website")} className="pl-9" placeholder="https://example.com" />
               </div>
+              {form.formState.errors.website && (
+                <p className="text-xs text-destructive">{form.formState.errors.website.message}</p>
+              )}
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -175,8 +178,8 @@ export function LeadForm({ initialData, onSubmit, onDelete, isLoading }: LeadFor
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label>Pipeline Stage</Label>
-              <Select 
-                onValueChange={(val) => form.setValue("pipelineStage", val as any)} 
+              <Select
+                onValueChange={(val) => form.setValue("pipelineStage", val as any)}
                 defaultValue={form.getValues("pipelineStage")}
               >
                 <SelectTrigger>
@@ -189,11 +192,11 @@ export function LeadForm({ initialData, onSubmit, onDelete, isLoading }: LeadFor
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div className="space-y-2">
               <Label>Lead Source</Label>
-              <Select 
-                onValueChange={(val) => form.setValue("source", val as any)} 
+              <Select
+                onValueChange={(val) => form.setValue("source", val as any)}
                 defaultValue={form.getValues("source")}
               >
                 <SelectTrigger>
@@ -228,7 +231,7 @@ export function LeadForm({ initialData, onSubmit, onDelete, isLoading }: LeadFor
                 <Input {...form.register("brandingRating")} type="number" min="0" max="10" placeholder="0" />
               </div>
             </div>
-            
+
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Est. Budget ($)</Label>
@@ -236,8 +239,8 @@ export function LeadForm({ initialData, onSubmit, onDelete, isLoading }: LeadFor
               </div>
               <div className="space-y-2">
                 <Label>Needs Editing?</Label>
-                <Select 
-                  onValueChange={(val) => form.setValue("needsEditing", val as any)} 
+                <Select
+                  onValueChange={(val) => form.setValue("needsEditing", val as any)}
                   defaultValue={form.getValues("needsEditing")}
                 >
                   <SelectTrigger>

@@ -10,14 +10,14 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { PIPELINE_STAGES } from "@/lib/constants";
 
-export function LeadProfileCard({ lead }: { lead: any }) {
+export function LeadProfileCard({ lead, onEditClick }: { lead: any; onEditClick?: () => void }) {
   const stageInfo = PIPELINE_STAGES.find(s => s.value === lead.pipelineStage);
   const scoreColor = lead.score >= 80 ? "text-emerald-500" : lead.score >= 60 ? "text-amber-500" : "text-muted-foreground";
 
   return (
     <Card className="h-full flex flex-col relative overflow-hidden">
       <div className="absolute top-0 right-0 p-4 flex gap-2">
-        <Button variant="ghost" size="icon" className="h-8 w-8">
+        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onEditClick}>
           <Edit3 className="h-4 w-4" />
         </Button>
       </div>

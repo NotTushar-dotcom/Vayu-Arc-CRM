@@ -11,7 +11,7 @@ export const leadCreateSchema = z.object({
   timeZone: z.string().max(50).optional().nullable(),
   email: z.string().email("Invalid email").optional().nullable().or(z.literal("")),
   phone: z.string().max(20).optional().nullable(),
-  website: z.string().url("Invalid URL").optional().nullable().or(z.literal("")),
+  website: z.string().max(200).optional().nullable().or(z.literal("")),
   linkedin: z.string().max(200).optional().nullable(),
   instagram: z.string().max(100).optional().nullable(),
   facebook: z.string().max(200).optional().nullable(),

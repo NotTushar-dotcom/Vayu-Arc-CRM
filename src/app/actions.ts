@@ -386,8 +386,23 @@ export async function getDashboardStats() {
   });
 
   // 1. Recent Activities from ActivityLog table
+  const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+  
+  try {
+    await prisma.activityLog.deleteMany({
+      where: {
+        createdAt: { lt: twentyFourHoursAgo },
+      },
+    });
+  } catch (err) {
+    console.error("Failed to auto-delete old activity logs:", err);
+  }
+
   const dbActivities = await prisma.activityLog.findMany({
-    where: { userId },
+    where: { 
+      userId,
+      createdAt: { gte: twentyFourHoursAgo },
+    },
     orderBy: { createdAt: "desc" },
     take: 6,
     include: { lead: { select: { fullName: true } } },
